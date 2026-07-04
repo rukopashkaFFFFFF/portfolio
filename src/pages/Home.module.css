@@ -1,0 +1,197 @@
+.hero {
+  padding: var(--space-20) 0 var(--space-16);
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .heroInner {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.heroAccent {
+  color: var(--color-accent);
+}
+
+.heroText {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 520px;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.heroVisual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.heroStat {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heroStat:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.heroStatNumber {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+}
+
+.heroStatLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: var(--space-10);
+  font-size: var(--text-3xl);
+}
+
+.services {
+  background: var(--color-bg-primary);
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .servicesGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.serviceCard {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: all var(--transition-base);
+}
+
+.serviceCard:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.serviceIcon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.serviceTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  margin: 0;
+}
+
+.serviceText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.featured {
+  background: var(--color-bg-secondary);
+}
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .projectsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .projectsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-10);
+}
+
+.ctaSection {
+  text-align: center;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+.ctaTitle {
+  color: var(--color-text-on-accent);
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-4);
+}
+
+.ctaText {
+  font-size: var(--text-lg);
+  opacity: 0.9;
+  margin-bottom: var(--space-8);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaSection .ctaTitle,
+.ctaSection .ctaText {
+  color: var(--color-text-on-accent);
+}

@@ -1,0 +1,141 @@
+.page {
+  min-height: 60vh;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: var(--space-3);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-10);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-bottom: var(--space-12);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+}
+
+.textarea {
+  padding: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
+}
+
+.textareaError {
+  border-color: var(--color-error);
+}
+
+.textareaError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.error {
+  font-size: var(--text-sm);
+  color: var(--color-error);
+}
+
+.submit {
+  align-self: flex-start;
+}
+
+.contactInfo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border-light);
+}
+
+@media (min-width: 640px) {
+  .contactInfo {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.contactItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.contactLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contactValue {
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.contactValue:hover {
+  color: var(--color-accent);
+}
+
+.success {
+  text-align: center;
+  padding: var(--space-16) 0;
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--color-success);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: var(--weight-bold);
+  margin: 0 auto var(--space-6);
+}
+
+.successTitle {
+  margin-bottom: var(--space-3);
+}
+
+.successText {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+}

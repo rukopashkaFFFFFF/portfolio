@@ -1,0 +1,130 @@
+.page {
+  min-height: 60vh;
+}
+
+.back {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.back:hover {
+  color: var(--color-accent);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  margin: 0;
+}
+
+.meta {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.previewSection {
+  margin-bottom: var(--space-10);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-10);
+}
+
+@media (min-width: 768px) {
+  .content {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.description h2,
+.results h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.description p {
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  font-size: var(--text-base);
+}
+
+.tags {
+  margin-top: var(--space-8);
+}
+
+.tags h3 {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-3);
+}
+
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.resultsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.resultItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.resultCheck {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-success);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  margin-top: 2px;
+}
+
+.notFoundTitle {
+  margin-bottom: var(--space-3);
+}
+
+.notFoundText {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}

@@ -1,0 +1,221 @@
+/* === Shared styles for all preview types === */
+
+.fallback {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+}
+
+.fallbackIcon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.fallbackTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.fallbackText {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fallbackLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.fallbackLink:hover {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+/* === IFrame === */
+
+.iframeWrapper {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.viewportBtns {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.viewportBtn {
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.viewportBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.viewportActive {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
+}
+
+.viewportActive:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-text-on-accent);
+}
+
+.openLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-lg);
+  transition: all var(--transition-fast);
+}
+
+.openLink:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-accent);
+}
+
+.iframeContainer {
+  margin: 0 auto;
+  transition: max-width var(--transition-base);
+  overflow: hidden;
+}
+
+.iframeScale {
+  width: 100%;
+  overflow: hidden;
+}
+
+.iframe {
+  width: 100%;
+  height: 70vh;
+  min-height: 400px;
+  max-height: 800px;
+  border: none;
+  display: block;
+}
+
+/* === Static Bundle === */
+
+.bundleWrapper {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.demoBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #FFFBEB;
+  border-bottom: 1px solid #FDE68A;
+  color: #92400E;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.demoIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* === Screenshot Gallery === */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.galleryMain {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+}
+
+.galleryImage {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+  display: block;
+}
+
+.galleryThumbs {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.thumbBtn {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  transition: all var(--transition-fast);
+}
+
+.thumbBtn:hover {
+  border-color: var(--color-accent-light);
+}
+
+.thumbActive {
+  border-color: var(--color-accent);
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

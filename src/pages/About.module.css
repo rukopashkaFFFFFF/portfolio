@@ -1,0 +1,121 @@
+.page {
+  min-height: 60vh;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.intro {
+  background: var(--color-accent-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.introText {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-primary);
+}
+
+.section {
+  margin-bottom: var(--space-12);
+}
+
+.section h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-6);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.stepNumber {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-full);
+  font-size: var(--text-lg);
+}
+
+.stepTitle {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-2);
+}
+
+.stepText {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.team {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-6);
+}
+
+.member {
+  text-align: center;
+  padding: var(--space-6);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+}
+
+.memberAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-xl);
+  margin: 0 auto var(--space-4);
+}
+
+.memberName {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-1);
+}
+
+.memberRole {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.cta {
+  text-align: center;
+  padding: var(--space-12) 0;
+}
+
+.cta h2 {
+  margin-bottom: var(--space-3);
+}
+
+.cta p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}

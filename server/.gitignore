@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+INITIAL_PASSWORDS.txt
+uploads/
+__pycache__/
+*.pyc

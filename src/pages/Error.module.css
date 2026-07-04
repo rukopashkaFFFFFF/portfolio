@@ -1,0 +1,38 @@
+.page {
+  min-height: 60vh;
+}
+
+.content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.code {
+  font-family: var(--font-heading);
+  font-size: clamp(5rem, 20vw, 10rem);
+  font-weight: var(--weight-extrabold);
+  line-height: 1;
+  color: var(--color-warning);
+  opacity: 0.3;
+  letter-spacing: -0.05em;
+}
+
+.title {
+  font-size: var(--text-3xl);
+  margin: 0;
+}
+
+.text {
+  color: var(--color-text-secondary);
+  max-width: 400px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
