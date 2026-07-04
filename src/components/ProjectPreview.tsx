@@ -3,6 +3,7 @@ import { IframePreview } from './IframePreview';
 import { StaticBundlePreview } from './StaticBundlePreview';
 import { ScreenshotGallery } from './ScreenshotGallery';
 import styles from './ProjectPreview.module.css';
+import { useCallback } from 'react';
 
 interface ProjectPreviewProps {
   project: ProjectData;
@@ -10,6 +11,16 @@ interface ProjectPreviewProps {
 
 export function ProjectPreview({ project }: ProjectPreviewProps) {
   const { previewType, liveUrl, screenshots, id, title } = project;
+
+  const renderNoPreview = useCallback(() => (
+    <div className={styles.fallback}>
+      <div className={styles.fallbackIcon} aria-hidden="true">🖼</div>
+      <p className={styles.fallbackTitle}>Превью не добавлено</p>
+      <p className={styles.fallbackText}>
+        Для этого проекта пока не загружены скриншоты или демо-сборка.
+      </p>
+    </div>
+  ), []);
 
   switch (previewType) {
     case 'IFRAME':
@@ -24,9 +35,6 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <IframePreview
           url={liveUrl}
           label={title}
-          onError={() => {
-            /* fallback handled inside IframePreview */
-          }}
         />
       );
 
@@ -41,14 +49,6 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
       if (screenshots.length > 0) {
         return <ScreenshotGallery screenshots={screenshots} title={title} />;
       }
-      return (
-        <div className={styles.fallback}>
-          <div className={styles.fallbackIcon} aria-hidden="true">🖼</div>
-          <p className={styles.fallbackTitle}>Превью не добавлено</p>
-          <p className={styles.fallbackText}>
-            Для этого проекта пока не загружены скриншоты или демо-сборка.
-          </p>
-        </div>
-      );
+      return renderNoPreview();
   }
 }

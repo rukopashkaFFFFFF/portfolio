@@ -11,6 +11,7 @@ model Admin {
   id           String   @id @default(cuid())
   username     String   @unique
   passwordHash String
+  tokenVersion Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -31,6 +32,9 @@ model Project {
   visible          Boolean     @default(true)
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+
+  @@index([visible, category, order])
+  @@index([order])
 }
 
 enum PreviewType {

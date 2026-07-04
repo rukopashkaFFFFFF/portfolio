@@ -1,11 +1,11 @@
 import styles from './ProjectPreview.module.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+
 interface StaticBundlePreviewProps {
   projectId: string;
   title: string;
 }
-
-const API_BASE = 'http://localhost:4000';
 
 export function StaticBundlePreview({ projectId, title }: StaticBundlePreviewProps) {
   const previewUrl = `${API_BASE}/preview/${projectId}/index.html`;

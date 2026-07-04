@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './ProjectPreview.module.css';
 
 interface IframePreviewProps {
   url: string;
   label: string;
-  onError?: () => void;
 }
 
 type ViewportSize = 'desktop' | 'tablet' | 'mobile';
@@ -15,31 +14,27 @@ const viewportConfig: Record<ViewportSize, { width: number; label: string }> = {
   mobile: { width: 375, label: 'Mobile' },
 };
 
-export function IframePreview({ url, label, onError }: IframePreviewProps) {
+const DESKTOP_SENTINEL = '100%';
+
+export function IframePreview({ url, label }: IframePreviewProps) {
   const [viewport, setViewport] = useState<ViewportSize>('desktop');
   const [error, setError] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleError = useCallback(() => {
-    setError(true);
-    onError?.();
-  }, [onError]);
 
   useEffect(() => {
     setError(false);
-    setLoaded(false);
 
     timeoutRef.current = setTimeout(() => {
-      if (!loaded) {
-        handleError();
-      }
+      setError(true);
     }, 10000);
 
     return () => {
-      if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null; }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     };
-  }, [url, loaded, handleError]);
+  }, [url]);
 
   if (error) {
     return (
@@ -63,7 +58,7 @@ export function IframePreview({ url, label, onError }: IframePreviewProps) {
   }
 
   const config = viewportConfig[viewport];
-  const containerWidth = config.width === 100 ? '100%' : `${config.width}px`;
+  const containerWidth = config.width === 100 ? DESKTOP_SENTINEL : `${config.width}px`;
 
   return (
     <div className={styles.iframeWrapper}>
@@ -92,17 +87,19 @@ export function IframePreview({ url, label, onError }: IframePreviewProps) {
           ↗
         </a>
       </div>
-      <div className={styles.iframeContainer} style={{ maxWidth: containerWidth }}>
+      <div className={styles.iframeContainer} style={{ maxWidth: containerWidth, transition: 'max-width 250ms ease' }}>
         <div className={styles.iframeScale}>
           <iframe
             src={url}
             title={label}
             className={styles.iframe}
             onLoad={() => {
-              setLoaded(true);
-              if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null; }
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
             }}
-            onError={handleError}
+            onError={() => setError(true)}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             allow="clipboard-read; clipboard-write"
           />

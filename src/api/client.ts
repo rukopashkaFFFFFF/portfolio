@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000/api';
 
 let accessToken: string | null = localStorage.getItem('admin_token');
 
@@ -15,13 +15,42 @@ export function getToken(): string | null {
   return accessToken;
 }
 
+let refreshPromise: Promise<boolean> | null = null;
+
+async function tryRefresh(): Promise<boolean> {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        setToken(null);
+        return false;
+      }
+      const data = await res.json();
+      if (data.accessToken) {
+        setToken(data.accessToken);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    ...(options.headers as Record<string, string> || {}),
-  };
+  const headers: Record<string, string> = {};
 
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
@@ -31,21 +60,33 @@ async function request<T>(
     headers['Content-Type'] = 'application/json';
   }
 
+  if (options.headers) {
+    const h = options.headers as Record<string, string>;
+    Object.assign(headers, h);
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers,
     credentials: 'include',
-  });
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeoutId));
 
-  if (res.status === 401) {
+  if (res.status === 401 && accessToken) {
     const refreshed = await tryRefresh();
     if (refreshed) {
       headers['Authorization'] = `Bearer ${accessToken}`;
+      const retryTimeoutId = setTimeout(() => controller.abort(), 30000);
       const retry = await fetch(`${API_BASE}${path}`, {
         ...options,
         headers,
         credentials: 'include',
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(retryTimeoutId));
+
       if (!retry.ok) {
         const err = await retry.json().catch(() => ({ error: 'Ошибка запроса' }));
         throw new Error(err.error || `HTTP ${retry.status}`);
@@ -62,21 +103,6 @@ async function request<T>(
   }
 
   return res.json();
-}
-
-async function tryRefresh(): Promise<boolean> {
-  try {
-    const res = await fetch(`${API_BASE}/auth/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    if (!res.ok) return false;
-    const data = await res.json();
-    setToken(data.accessToken);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 export const api = {
@@ -130,6 +156,11 @@ export const api = {
         body: fd,
       });
     },
+  },
+
+  contacts: {
+    send: (data: { name: string; email: string; phone?: string; message: string }) =>
+      request<{ message: string }>('/contacts', { method: 'POST', body: JSON.stringify(data) }),
   },
 };
 

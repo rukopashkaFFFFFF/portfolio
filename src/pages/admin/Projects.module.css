@@ -98,9 +98,43 @@
 .dragHandle {
   cursor: grab;
   color: var(--color-text-muted);
-  font-size: var(--text-xl);
   user-select: none;
   padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.reorderBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.reorderBtn {
+  width: 20px;
+  height: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-size: 8px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reorderBtn:hover:not(:disabled) {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.reorderBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .itemInfo {
@@ -158,8 +192,9 @@
 }
 
 .visToggle {
-  width: 44px;
+  min-width: 60px;
   height: 32px;
+  padding: 0 var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   font-size: var(--text-xs);

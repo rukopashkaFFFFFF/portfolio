@@ -2,6 +2,7 @@ import { type FormEvent, useState, useRef } from 'react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { useHelmet } from '../utils/HelmetProvider';
+import { api } from '../api/client';
 import styles from './Contacts.module.css';
 
 interface FormData {
@@ -47,6 +48,7 @@ export function ContactsPage() {
   const [form, setForm] = useState<FormData>(loadDraft);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   function handleChange(field: keyof FormData, value: string) {
@@ -55,16 +57,29 @@ export function ContactsPage() {
     sessionStorage.setItem(storageKey, JSON.stringify(next));
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const validation = validate(form);
     setErrors(validation);
 
     if (Object.keys(validation).length > 0) return;
 
-    setSubmitted(true);
-    sessionStorage.removeItem(storageKey);
-    setForm({ name: '', email: '', phone: '', message: '' });
+    setSending(true);
+    try {
+      await api.contacts.send({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim() || undefined,
+        message: form.message.trim(),
+      });
+      setSubmitted(true);
+      sessionStorage.removeItem(storageKey);
+      setForm({ name: '', email: '', phone: '', message: '' });
+    } catch (err) {
+      setErrors({ message: err instanceof Error ? err.message : 'Ошибка отправки. Попробуйте позже.' });
+    } finally {
+      setSending(false);
+    }
   }
 
   if (submitted) {
@@ -138,8 +153,8 @@ export function ContactsPage() {
               </p>
             )}
           </div>
-          <Button type="submit" size="lg" className={styles.submit}>
-            Отправить
+          <Button type="submit" size="lg" className={styles.submit} disabled={sending}>
+            {sending ? 'Отправка...' : 'Отправить'}
           </Button>
         </form>
 

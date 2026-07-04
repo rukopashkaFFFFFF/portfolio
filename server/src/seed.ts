@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import fs from 'fs';
@@ -9,7 +10,7 @@ function generatePassword(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
   let password = '';
   for (let i = 0; i < 16; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+    password += chars.charAt(crypto.randomInt(0, chars.length));
   }
   return password;
 }
@@ -37,7 +38,7 @@ async function main() {
     });
 
     passwords[admin.username] = password;
-    console.log(`✓ Admin "${admin.username}" created/updated`);
+    console.log(`Admin "${admin.username}" created/updated`);
   }
 
   const passwordsPath = path.join(__dirname, '..', 'INITIAL_PASSWORDS.txt');
@@ -46,9 +47,10 @@ async function main() {
     .join('\n');
 
   fs.writeFileSync(passwordsPath, content);
-  console.log(`\n⚠  INITIAL PASSWORDS SAVED TO: ${passwordsPath}`);
-  console.log('   DELETE THIS FILE AFTER SAVING PASSWORDS!\n');
-  console.log(content);
+  console.log(`\nINITIAL PASSWORDS SAVED TO: ${passwordsPath}\nDELETE THIS FILE AFTER SAVING PASSWORDS!\n`);
+  for (const [user, pw] of Object.entries(passwords)) {
+    console.log(`${user}: ${pw}`);
+  }
 }
 
 main()

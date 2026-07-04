@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from 'react';
 import { api, setToken, getToken } from '../api/client';
@@ -36,7 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setAdmin({ id: payload.adminId, username: payload.username });
+        if (payload.exp && payload.exp * 1000 > Date.now()) {
+          setAdmin({ id: payload.adminId, username: payload.username });
+        } else {
+          setToken(null);
+        }
       } catch {
         setToken(null);
       }
@@ -58,8 +63,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAdmin(null);
   }, []);
 
+  const value = useMemo(() => ({ admin, isLoading, login, logout }), [admin, isLoading, login, logout]);
+
   return (
-    <AuthContext.Provider value={{ admin, isLoading, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

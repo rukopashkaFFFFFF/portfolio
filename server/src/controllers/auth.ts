@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
 import prisma from '../prisma';
-import { hashPassword, comparePassword, generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/auth';
+import { comparePassword, generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/auth';
 
 export async function login(req: Request, res: Response): Promise<void> {
   const { username, password } = req.body;
 
   if (!username || !password) {
     res.status(400).json({ error: 'Укажите имя пользователя и пароль' });
+    return;
+  }
+
+  if (typeof username !== 'string' || username.length > 50 || typeof password !== 'string') {
+    res.status(400).json({ error: 'Некорректные данные' });
     return;
   }
 
@@ -22,13 +27,12 @@ export async function login(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const payload = { adminId: admin.id, username: admin.username };
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
+  const accessToken = generateAccessToken(admin.id, admin.username);
+  const refreshToken = generateRefreshToken(admin.id, admin.username);
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/api/auth',
@@ -52,13 +56,12 @@ export async function refresh(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const newPayload = { adminId: admin.id, username: admin.username };
-    const accessToken = generateAccessToken(newPayload);
-    const refreshToken = generateRefreshToken(newPayload);
+    const accessToken = generateAccessToken(admin.id, admin.username);
+    const refreshToken = generateRefreshToken(admin.id, admin.username);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/api/auth',

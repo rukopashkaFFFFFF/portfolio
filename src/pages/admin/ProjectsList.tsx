@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api, type ProjectData } from '../../api/client';
 import styles from './Projects.module.css';
@@ -7,12 +7,15 @@ export function AdminProjectsPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const projectsRef = useRef(projects);
+  projectsRef.current = projects;
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const loadProjects = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await api.projects.list({ limit: '100' });
+      setError('');
+      const data = await api.projects.list({ limit: '100', admin: 'true' });
       setProjects(data.projects);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки');
@@ -53,7 +56,7 @@ export function AdminProjectsPage() {
   function handleDragOver(e: React.DragEvent, index: number) {
     e.preventDefault();
     if (dragIndex === null || dragIndex === index) return;
-    const updated = [...projects];
+    const updated = [...projectsRef.current];
     const [dragged] = updated.splice(dragIndex, 1);
     updated.splice(index, 0, dragged);
     setDragIndex(index);
@@ -69,8 +72,24 @@ export function AdminProjectsPage() {
         projects.map((p, i) => ({ id: p.id, order: i }))
       );
     } catch {
+      setError('Не удалось сохранить порядок. Перезагрузите страницу.');
       loadProjects();
     }
+  }
+
+  function moveProject(index: number, direction: 'up' | 'down') {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= projects.length) return;
+    const updated = [...projects];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(targetIndex, 0, moved);
+    setProjects(updated.map((p, i) => ({ ...p, order: i })));
+    api.projects.updateOrder(
+      updated.map((p, i) => ({ id: p.id, order: i }))
+    ).catch(() => {
+      setError('Не удалось сохранить порядок');
+      loadProjects();
+    });
   }
 
   if (loading) {
@@ -120,7 +139,20 @@ export function AdminProjectsPage() {
             onDragEnd={handleDragEnd}
           >
             <div className={styles.dragHandle} aria-label="Перетащить для сортировки">
-              ⠿
+              <div className={styles.reorderBtns}>
+                <button
+                  className={styles.reorderBtn}
+                  onClick={() => moveProject(index, 'up')}
+                  disabled={index === 0}
+                  aria-label="Переместить вверх"
+                >↑</button>
+                <button
+                  className={styles.reorderBtn}
+                  onClick={() => moveProject(index, 'down')}
+                  disabled={index === projects.length - 1}
+                  aria-label="Переместить вниз"
+                >↓</button>
+              </div>
             </div>
             <div className={styles.itemInfo}>
               <div className={styles.itemTitleRow}>
@@ -139,18 +171,18 @@ export function AdminProjectsPage() {
               <button
                 className={`${styles.visToggle} ${project.visible ? styles.visible : styles.hidden}`}
                 onClick={() => toggleVisibility(project.id, project.visible)}
-                title={project.visible ? 'Скрыть' : 'Показать'}
+                title={project.visible ? 'Скрыть с сайта' : 'Показать на сайте'}
               >
-                {project.visible ? 'Глаз' : '—'}
+                {project.visible ? 'Видим' : 'Скрыт'}
               </button>
               <Link to={`/admin/projects/${project.id}`} className={styles.editBtn}>
-                Редакт.
+                Изменить
               </Link>
               <button
                 className={styles.deleteBtn}
                 onClick={() => handleDelete(project.id, project.title)}
               >
-                Удал.
+                Удалить
               </button>
             </div>
           </div>

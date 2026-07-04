@@ -17,6 +17,8 @@ const PREVIEW_TYPES = [
   { value: 'NONE', label: 'Нет превью' },
 ];
 
+type PreviewTypeValue = 'IFRAME' | 'SCREENSHOT' | 'STATIC_BUNDLE' | 'NONE';
+
 interface FormState {
   title: string;
   description: string;
@@ -26,8 +28,9 @@ interface FormState {
   coverImage: string;
   screenshots: string[];
   liveUrl: string;
-  previewType: string;
+  previewType: PreviewTypeValue;
   isComplexSystem: boolean;
+  visible: boolean;
 }
 
 const emptyForm: FormState = {
@@ -41,7 +44,16 @@ const emptyForm: FormState = {
   liveUrl: '',
   previewType: 'NONE',
   isComplexSystem: false,
+  visible: true,
 };
+
+function isValidImageFile(file: File) {
+  return file.type.startsWith('image/');
+}
+
+function isValidZipFile(file: File) {
+  return file.name.endsWith('.zip') || file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
+}
 
 export function AdminProjectFormPage() {
   const { id } = useParams<{ id: string }>();
@@ -75,7 +87,11 @@ export function AdminProjectFormPage() {
           liveUrl: p.liveUrl || '',
           previewType: p.previewType,
           isComplexSystem: p.isComplexSystem,
+          visible: p.visible,
         });
+        if (p.staticBundlePath) {
+          setBundleName(p.staticBundlePath);
+        }
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Ошибка загрузки'))
       .finally(() => setLoading(false));
@@ -94,10 +110,7 @@ export function AdminProjectFormPage() {
   }
 
   function removeTag(tag: string) {
-    update(
-      'tags',
-      form.tags.filter((t) => t !== tag)
-    );
+    update('tags', form.tags.filter((t) => t !== tag));
   }
 
   async function handleUploadCover(file: File) {
@@ -116,7 +129,9 @@ export function AdminProjectFormPage() {
     setUploadingScreen(true);
     try {
       const result = await api.upload.file(file);
-      update('screenshots', [...form.screenshots, result.url]);
+      if (!form.screenshots.includes(result.url)) {
+        update('screenshots', [...form.screenshots, result.url]);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки скриншота');
     } finally {
@@ -125,14 +140,13 @@ export function AdminProjectFormPage() {
   }
 
   async function handleUploadBundle(file: File) {
-    if (!id && !isEdit) {
+    if (!id) {
       setError('Сначала сохраните проект, затем загрузите сборку');
       return;
     }
     setUploadingBundle(true);
     try {
-      const projectId = id!;
-      await api.upload.bundle(file, projectId);
+      await api.upload.bundle(file, id);
       setBundleName(file.name);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки сборки');
@@ -144,23 +158,38 @@ export function AdminProjectFormPage() {
   function handleDropCover(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) handleUploadCover(file);
+    if (file && isValidImageFile(file)) handleUploadCover(file);
   }
 
   function handleDropScreen(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) handleUploadScreenshot(file);
+    if (file && isValidImageFile(file)) handleUploadScreenshot(file);
   }
 
   function handleDropBundle(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith('.zip')) {
+    if (file && isValidZipFile(file)) {
       handleUploadBundle(file);
     } else {
       setError('Пожалуйста, загрузите ZIP-архив');
     }
+  }
+
+  function handleFileSelectCover(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file && isValidImageFile(file)) handleUploadCover(file);
+  }
+
+  function handleFileSelectScreen(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file && isValidImageFile(file)) handleUploadScreenshot(file);
+  }
+
+  function handleFileSelectBundle(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file && isValidZipFile(file)) handleUploadBundle(file);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -169,6 +198,11 @@ export function AdminProjectFormPage() {
 
     if (!form.title.trim() || !form.description.trim()) {
       setError('Заполните название и описание проекта');
+      return;
+    }
+
+    if (form.isComplexSystem && form.previewType === 'IFRAME') {
+      setError('Для сложных систем (CRM/кабинеты) нельзя использовать IFRAME. Выберите STATIC_BUNDLE.');
       return;
     }
 
@@ -182,16 +216,15 @@ export function AdminProjectFormPage() {
         coverImage: form.coverImage,
         screenshots: form.screenshots,
         liveUrl: form.liveUrl.trim() || null,
-        previewType: form.previewType as 'IFRAME' | 'SCREENSHOT' | 'STATIC_BUNDLE' | 'NONE',
+        previewType: form.previewType,
         isComplexSystem: form.isComplexSystem,
+        visible: form.visible,
       };
 
       if (isEdit) {
         await api.projects.update(id!, payload);
       } else {
-        const created = await api.projects.create(payload);
-        navigate(`/admin/projects/${created.id}`, { replace: true });
-        return;
+        await api.projects.create(payload);
       }
       navigate('/admin/projects');
     } catch (err) {
@@ -215,7 +248,12 @@ export function AdminProjectFormPage() {
           <button
             type="button"
             className={styles.cancelBtn}
-            onClick={() => navigate('/admin/projects')}
+            onClick={() => {
+              if (form.title || form.description) {
+                if (!window.confirm('Есть несохранённые изменения. Уйти?')) return;
+              }
+              navigate('/admin/projects');
+            }}
           >
             Отмена
           </button>
@@ -234,7 +272,6 @@ export function AdminProjectFormPage() {
 
       <div className={styles.grid}>
         <div className={styles.mainCol}>
-          {/* Title */}
           <div className={styles.field}>
             <label htmlFor="pf-title" className={styles.label}>Название проекта *</label>
             <input
@@ -242,11 +279,11 @@ export function AdminProjectFormPage() {
               className={styles.input}
               value={form.title}
               onChange={(e) => update('title', e.target.value)}
+              maxLength={200}
               placeholder="Например: Lumi Store"
             />
           </div>
 
-          {/* Description */}
           <div className={styles.field}>
             <label htmlFor="pf-desc" className={styles.label}>Описание *</label>
             <textarea
@@ -254,33 +291,31 @@ export function AdminProjectFormPage() {
               className={styles.textarea}
               value={form.description}
               onChange={(e) => update('description', e.target.value)}
+              maxLength={2000}
               rows={3}
               placeholder="Краткое описание проекта"
             />
           </div>
 
-          {/* Category + Tags */}
-          <div className={styles.row}>
-            <div className={styles.field}>
-              <label htmlFor="pf-cat" className={styles.label}>Категория</label>
-              <select
-                id="pf-cat"
-                className={styles.select}
-                value={form.category}
-                onChange={(e) => update('category', e.target.value)}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-            </div>
+          <div className={styles.field}>
+            <label htmlFor="pf-cat" className={styles.label}>Категория</label>
+            <select
+              id="pf-cat"
+              className={styles.select}
+              value={form.category}
+              onChange={(e) => update('category', e.target.value)}
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
           </div>
 
-          {/* Tags */}
           <div className={styles.field}>
-            <label className={styles.label}>Технологии</label>
+            <label htmlFor="pf-tags" className={styles.label}>Технологии (нажмите Enter для добавления)</label>
             <div className={styles.tagInput}>
               <input
+                id="pf-tags"
                 className={styles.input}
                 value={form.tagInput}
                 onChange={(e) => update('tagInput', e.target.value)}
@@ -314,7 +349,6 @@ export function AdminProjectFormPage() {
             )}
           </div>
 
-          {/* Live URL */}
           <div className={styles.field}>
             <label htmlFor="pf-url" className={styles.label}>Live URL</label>
             <input
@@ -326,43 +360,53 @@ export function AdminProjectFormPage() {
             />
           </div>
 
-          {/* Preview Type */}
           <div className={styles.field}>
             <label htmlFor="pf-preview" className={styles.label}>Тип превью</label>
             <select
               id="pf-preview"
               className={styles.select}
               value={form.previewType}
-              onChange={(e) => update('previewType', e.target.value)}
+              onChange={(e) => {
+                update('previewType', e.target.value as PreviewTypeValue);
+                if (e.target.value !== 'STATIC_BUNDLE') {
+                  update('isComplexSystem', false);
+                }
+              }}
             >
               {PREVIEW_TYPES.map((p) => (
                 <option key={p.value} value={p.value}>{p.label}</option>
               ))}
             </select>
-            {form.isComplexSystem && (
-              <p className={styles.hint}>
-                Рекомендуем заливать только фронтенд-сборку с демо-данными,
-                без подключения к реальной базе.
-              </p>
-            )}
           </div>
 
-          {/* Complex system checkbox */}
           <label className={styles.checkbox}>
             <input
               type="checkbox"
               checked={form.isComplexSystem}
-              onChange={(e) => update('isComplexSystem', e.target.checked)}
+              onChange={(e) => {
+                update('isComplexSystem', e.target.checked);
+                if (e.target.checked && form.previewType === 'IFRAME') {
+                  update('previewType', 'STATIC_BUNDLE');
+                }
+              }}
             />
-            <span>Это сложная система (CRM/личный кабинет)</span>
+            <span className={styles.checkboxLabel}>Это сложная система (CRM/личный кабинет)</span>
             <span className={styles.checkboxHint}>
-              При выборе рекомендуется тип превью STATIC_BUNDLE
+              Рекомендуем заливать только фронтенд-сборку с демо-данными, без подключения к реальной базе.
             </span>
+          </label>
+
+          <label className={styles.visibleCheckbox}>
+            <input
+              type="checkbox"
+              checked={form.visible}
+              onChange={(e) => update('visible', e.target.checked)}
+            />
+            <span>Показывать проект на публичном сайте</span>
           </label>
         </div>
 
         <div className={styles.sideCol}>
-          {/* Cover image */}
           <div className={styles.field}>
             <label className={styles.label}>Обложка</label>
             <div
@@ -384,14 +428,10 @@ export function AdminProjectFormPage() {
               type="file"
               accept="image/*"
               hidden
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleUploadCover(file);
-              }}
+              onChange={handleFileSelectCover}
             />
           </div>
 
-          {/* Screenshots */}
           <div className={styles.field}>
             <label className={styles.label}>Скриншоты</label>
             <div
@@ -429,14 +469,10 @@ export function AdminProjectFormPage() {
               type="file"
               accept="image/*"
               hidden
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleUploadScreenshot(file);
-              }}
+              onChange={handleFileSelectScreen}
             />
           </div>
 
-          {/* Static bundle upload */}
           {form.previewType === 'STATIC_BUNDLE' && (
             <div className={styles.field}>
               <label className={styles.label}>ZIP-архив сборки</label>
@@ -461,10 +497,7 @@ export function AdminProjectFormPage() {
                 type="file"
                 accept=".zip"
                 hidden
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleUploadBundle(file);
-                }}
+                onChange={handleFileSelectBundle}
               />
               <p className={styles.hint}>
                 Только фронтенд-сборка с демо-данными (макс. 50 МБ)
