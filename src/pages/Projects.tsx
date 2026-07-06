@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../components/Card';
 import { Input } from '../components/Input';
-import { projects, type ProjectDisplay } from '../data/projects';
+import { api, type ProjectData } from '../api/client';
 import { useHelmet } from '../utils/HelmetProvider';
 import styles from './Projects.module.css';
 
-type Category = ProjectDisplay['category'] | 'all';
+type Category = ProjectData['category'] | 'all';
 
 const categories: { value: Category; label: string }[] = [
   { value: 'all', label: 'Все проекты' },
@@ -22,17 +22,20 @@ export function ProjectsPage() {
   });
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = useMemo(() => {
-    return projects.filter((p) => {
-      const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
-      const query = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !query ||
-        p.title.toLowerCase().includes(query) ||
-        p.tags.some((tag) => tag.toLowerCase().includes(query)) ||
-        p.description.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
+  useEffect(() => {
+    const params: Record<string, string> = { limit: '50' };
+    if (activeCategory !== 'all') params.category = activeCategory;
+    if (searchQuery.trim()) params.search = searchQuery.trim();
+    setLoading(true);
+    api.projects.list(params).then((data) => {
+      setProjects(data.projects);
+    }).catch(() => {
+      setProjects([]);
+    }).finally(() => {
+      setLoading(false);
     });
   }, [activeCategory, searchQuery]);
 
@@ -71,9 +74,13 @@ export function ProjectsPage() {
           </div>
         </div>
 
-        {filtered.length > 0 ? (
+        {loading ? (
+          <div className={styles.empty}>
+            <p className={styles.emptyText}>Загрузка проектов...</p>
+          </div>
+        ) : projects.length > 0 ? (
           <div className={styles.grid}>
-            {filtered.map((project) => (
+            {projects.map((project) => (
               <Card key={project.id} {...project} />
             ))}
           </div>

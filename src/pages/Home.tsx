@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
-import { projects } from '../data/projects';
+import { api, type ProjectData } from '../api/client';
 import { useHelmet } from '../utils/HelmetProvider';
 import styles from './Home.module.css';
 
@@ -10,11 +11,18 @@ export function HomePage() {
     title: 'Веб-Решения — создаём сайты, которые продают',
     description: 'Студия веб-разработки полного цикла. Интернет-магазины, лендинги, CRM, корпоративные сайты. Технологично, надёжно, с измеримым результатом.',
   });
-  const featured = projects.slice(0, 3);
+  const [featured, setFeatured] = useState<ProjectData[]>([]);
+
+  useEffect(() => {
+    api.projects.list({ limit: '3' }).then((data) => {
+      setFeatured(data.projects);
+    }).catch(() => {
+      setFeatured([]);
+    });
+  }, []);
 
   return (
     <>
-      {/* Hero */}
       <section className={styles.hero}>
         <div className={`container ${styles.heroInner}`}>
           <div className={styles.heroContent}>
@@ -53,7 +61,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Services */}
       <section className={`section ${styles.services}`}>
         <div className="container">
           <h2 className={styles.sectionTitle}>Что мы делаем</h2>
@@ -94,7 +101,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Featured projects */}
       <section className={`section ${styles.featured}`}>
         <div className="container">
           <h2 className={styles.sectionTitle}>Последние работы</h2>
@@ -111,7 +117,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className={`section ${styles.ctaSection}`}>
         <div className="container container--narrow">
           <h2 className={styles.ctaTitle}>Готовы обсудить ваш проект?</h2>

@@ -8,7 +8,6 @@ interface CardProps {
   description: string;
   coverImage: string;
   tags: string[];
-  category: string;
 }
 
 export function Card({ id, title, description, coverImage, tags }: CardProps) {
