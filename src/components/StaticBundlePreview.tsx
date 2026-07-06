@@ -1,6 +1,6 @@
 import styles from './ProjectPreview.module.css';
 
-const API_BASE = import.meta.env.VITE_PREVIEW_BASE || 'http://localhost:4000';
+const API_BASE = import.meta.env.DEV ? '' : (import.meta.env.VITE_PREVIEW_BASE || '');
 
 interface StaticBundlePreviewProps {
   projectId: string;

@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000/api';
+const API_BASE = import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_BASE || '/api');
 
 let accessToken: string | null = localStorage.getItem('admin_token');
 
