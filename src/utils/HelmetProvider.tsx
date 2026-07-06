@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, useContext, useEffect, useCallback, useState } from 'react';
+import { type ReactNode, createContext, useContext, useEffect, useCallback, useState, useRef } from 'react';
 
 interface MetaState {
   title: string;
@@ -25,7 +25,7 @@ export function HelmetProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.title = meta.title;
     const setMetaTag = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+      let el: HTMLMetaElement | null = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
       if (!el) {
         el = document.createElement('meta');
         if (name.startsWith('og:')) {
@@ -58,7 +58,12 @@ export function HelmetProvider({ children }: { children: ReactNode }) {
 
 export function useHelmet(meta: Partial<MetaState>) {
   const { setMeta } = useContext(HelmetContext);
+  const prevRef = useRef<string>('');
+
   useEffect(() => {
+    const key = `${meta.title || ''}|${meta.description || ''}|${meta.ogImage || ''}`;
+    if (key === prevRef.current) return;
+    prevRef.current = key;
     setMeta(meta);
   }, [meta, setMeta]);
 }
