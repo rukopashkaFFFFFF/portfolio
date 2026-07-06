@@ -22,11 +22,24 @@ export const upload = multer({
   storage,
   limits: { fileSize: MAX_SIZE },
   fileFilter: (_req, file, cb) => {
-    const allowed = /\.(png|jpg|jpeg|gif|webp|svg|zip)$/i;
+    const allowed = /\.(png|jpg|jpeg|gif|webp|svg)$/i;
     if (allowed.test(path.extname(file.originalname))) {
       cb(null, true);
     } else {
-      cb(new Error('Недопустимый тип файла. Разрешены: png, jpg, jpeg, gif, webp, svg, zip'));
+      cb(new Error('Недопустимый тип файла. Разрешены: png, jpg, jpeg, gif, webp, svg'));
+    }
+  },
+});
+
+export const uploadBundle = multer({
+  storage,
+  limits: { fileSize: MAX_SIZE },
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.zip$/i;
+    if (allowed.test(path.extname(file.originalname))) {
+      cb(null, true);
+    } else {
+      cb(new Error('Недопустимый тип файла. Для сборки требуется ZIP-архив'));
     }
   },
 });

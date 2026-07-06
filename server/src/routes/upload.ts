@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
-import { upload } from '../utils/upload';
+import { upload, uploadBundle } from '../utils/upload';
 import prisma from '../prisma';
 import fs from 'fs';
 import path from 'path';
@@ -46,7 +46,7 @@ router.post('/', authMiddleware, uploadLimiter, (req: Request, res: Response): v
 });
 
 router.post('/bundle', authMiddleware, uploadLimiter, (req: Request, res: Response): void => {
-  upload.single('bundle')(req, res, (err) => {
+  uploadBundle.single('bundle')(req, res, (err) => {
     if (err) {
       const msg = err instanceof Error ? err.message : 'Ошибка загрузки';
       res.status(400).json({ error: msg });

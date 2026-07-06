@@ -10,7 +10,7 @@ export async function login(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  if (typeof username !== 'string' || username.length > 50 || typeof password !== 'string') {
+  if (typeof username !== 'string' || username.length > 50 || typeof password !== 'string' || password.length > 128) {
     res.status(400).json({ error: 'Некорректные данные' });
     return;
   }
