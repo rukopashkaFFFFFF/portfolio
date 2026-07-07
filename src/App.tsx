@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './layouts/Layout';
-import { HomePage } from './pages/Home';
+import { LandingPage } from './pages/design/LandingPage';
 import { ProjectsPage } from './pages/Projects';
 import { ProjectDetailPage } from './pages/ProjectDetail';
 import { AboutPage } from './pages/About';
@@ -20,14 +20,19 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* New design landing — self-contained, own header/footer */}
+            <Route index element={<LandingPage />} />
+
+            {/* Old public sub-pages — keep old Layout for now */}
             <Route element={<Layout />}>
-              <Route index element={<HomePage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="projects/:id" element={<ProjectDetailPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="contacts" element={<ContactsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
+
+            {/* Admin */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route
               path="/admin"

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "lumi-store",
+    "title": "Lumi Store",
+    "slug": "lumi-store",
+    "description": "Интернет-магазин косметики с персональными рекомендациями, квизом подбора средств и интеграцией с 1С. Конверсия выросла на 34% за первые три месяца.",
+    "category": "ecommerce",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["Next.js", "TypeScript", "PostgreSQL", "1С"],
+    "liveUrl": "https://example.com"
+  },
+  {
+    "id": "nordtrans-crm",
+    "title": "NordTrans CRM",
+    "slug": "nordtrans-crm",
+    "description": "CRM для транспортной компании: управление заявками, маршрутами и водителями в одном интерфейсе. Заменила три разных Excel-файла.",
+    "category": "crm",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["React", "Node.js", "Prisma", "PostgreSQL"],
+    "liveUrl": ""
+  },
+  {
+    "id": "kamen-bez-posrednikov",
+    "title": "Камень без посредников",
+    "slug": "kamen-bez-posrednikov",
+    "description": "Лендинг для поставщика природного камня. Калькулятор стоимости в реальном времени, галерея материалов с фильтрами, форма замера на дом.",
+    "category": "landing",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["React", "Vite", "CSS Modules"],
+    "liveUrl": "https://example.com"
+  },
+  {
+    "id": "stroymag-pro",
+    "title": "СтройМаг Pro",
+    "slug": "stroymag-pro",
+    "description": "Корпоративный портал строительной компании: каталог объектов, личный кабинет подрядчика, документооборот. Интегрирован с Битрикс24.",
+    "category": "corporate",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["React", "TypeScript", "Bitrix24 API", "Redis"],
+    "liveUrl": ""
+  },
+  {
+    "id": "freshbox",
+    "title": "FreshBox",
+    "slug": "freshbox",
+    "description": "Подписка на доставку фермерских продуктов. Конструктор корзины, управление подпиской, интеграция с платёжной системой и логистикой.",
+    "category": "ecommerce",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["Next.js", "Stripe", "Prisma", "Tailwind"],
+    "liveUrl": "https://example.com"
+  },
+  {
+    "id": "legal-room",
+    "title": "Legal Room",
+    "slug": "legal-room",
+    "description": "SaaS-платформа для юридических бюро: клиентская база, ведение дел, шаблоны документов, биллинг. Используется 12 бюро.",
+    "category": "crm",
+    "coverImage": "",
+    "images": [],
+    "technologies": ["React", "tRPC", "PostgreSQL", "S3"],
+    "liveUrl": ""
+  }
+]
