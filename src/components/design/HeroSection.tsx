@@ -22,7 +22,7 @@ function FloatingBlock({
       transition={{ duration: 0.6, delay, ease: EASE }}
       className={[
         'gradient-border rounded-xl bg-[#151820] p-4 shadow-[0_2px_16px_rgba(0,0,0,0.32)]',
-        !prefersReduced ? 'animate-[float-idle_4s_ease-in-out_infinite]' : '',
+        !prefersReduced ? 'animate-[agency-float-idle_4s_ease-in-out_infinite]' : '',
         className,
       ].join(' ')}
       style={!prefersReduced ? { animationDelay: `${delay * 0.5}s` } : undefined}
